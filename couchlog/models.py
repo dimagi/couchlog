@@ -150,13 +150,5 @@ class ExceptionRecord(Document):
         c_record.save()
         return c_record
         
-import couchlog.signals
-
-if config.COUCHLOG_ENABLED:
-    # Initialize and register the handler
-    from couchlog.handlers import CouchHandler
-    handler = CouchHandler()
-    # the log_threshold is the ini value for what level the error handler should listen for
-    # if it's less than the threshold set, the handler will never trigger. 
-    logging.root.setLevel(config.COUCHLOG_THRESHOLD)
-    logging.root.addHandler(handler)
+from couchlog import signals
+from couchlog import handler_init

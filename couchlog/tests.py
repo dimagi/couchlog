@@ -10,10 +10,15 @@ class LogTestCase(TestCase):
             item.delete()
     
     def testThreshold(self):
-        # makes the shady assumption that the threshold is above debug
+        # makes the shady assumption that the couchlog threshold is above debug
         self.assertEqual(0, len(ExceptionRecord.view("couchlog/all_by_date").all()))
         logging.debug("Don't write me to couchlog!")
         self.assertEqual(0, len(ExceptionRecord.view("couchlog/all_by_date").all()))
+        # make sure we're not dependent on the root log level
+        logging.root.setLevel(logging.DEBUG)
+        logging.debug("Don't write me to couchlog either!")
+        self.assertEqual(0, len(ExceptionRecord.view("couchlog/all_by_date").all()))
+        
         
         
     def testCreation(self):

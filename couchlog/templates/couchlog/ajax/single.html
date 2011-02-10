@@ -16,6 +16,7 @@
   <table border="0" style="max-width: 800px; border: 3px solid black; padding: 10px; background-color: white;">
     <tr><td>Date:&nbsp;&nbsp;</td><td><strong>{{ log.date|date:"d M Y H:i"}}</strong></td></tr>
     <tr><td>Status:&nbsp;&nbsp;</td><td><strong>{{ log.get_status_display }}</strong></td></tr>
+    <tr><td>Log level:&nbsp;&nbsp;</td><td><strong>{{ log.level|default:"UNKNOWN" }}</strong></td></tr>
     <tr><td>Message:&nbsp;&nbsp;</td><td><strong>{{ log.message|default:"UNKNOWN ERROR"|truncatewords:50 }}</strong></td></tr>
     <tr><td>Type:&nbsp;&nbsp;</td><td><strong>{{ log.type }}</strong></td></tr>
     <tr><td>Stack Trace:&nbsp;&nbsp;</td><td><strong>{{ log.stack_trace|linebreaksbr|truncatewords:50 }}</strong></td></tr>
