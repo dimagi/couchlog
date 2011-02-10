@@ -19,5 +19,4 @@ class CouchHandler(Handler):
             # know that something went wrong.
             # unfortunately we can't really log it, as that could land us in
             # an infinite loop.
-            raise
             pass
