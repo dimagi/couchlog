@@ -131,9 +131,6 @@ class ExceptionRecord(Document):
         # call it here
         random.seed()
         c_record = ExceptionRecord(
-            # couchdbkit's uuid generation is not fork-safe
-            # so we generate a random id
-            _id=random_hex(),
             function=record.funcName,
             line_number=record.lineno,
             level=record.levelname,
@@ -146,8 +143,12 @@ class ExceptionRecord(Document):
             url="",
             query_params={}
         )
-        
+        # couchdbkit's uuid generation is not fork-safe
+        # so we generate a random id
+        c_record._id = random_hex()
+
         c_record.save()
+
         return c_record
         
 from couchlog import signals
