@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+import random
 
 from couchdbkit.ext.django.schema import *
 from datetime import datetime
 import sys, traceback, logging
 from couchlog import config
+from dimagi.utils.make_uuid import random_hex
 
 class ExceptionRecord(Document):
     """
@@ -122,17 +124,28 @@ class ExceptionRecord(Document):
         # 'getMessage', 'levelname', 'levelno', 'lineno', 'module', 'msecs', 
         # 'msg', 'name', 'pathname', 'process', 'processName', 
         # 'relativeCreated', 'thread', 'threadName']
-        c_record = ExceptionRecord(function=record.funcName,
-                                   line_number=record.lineno,
-                                   level=record.levelname,
-                                   logger_name=record.name,
-                                   pathname=record.pathname,
-                                   message=record.getMessage(),
-                                   type=str(type),
-                                   stack_trace=traceback_string,
-                                   date=datetime.utcnow(),
-                                   url="",
-                                   query_params={})
+
+        # to fix a problem with gunicorn
+        # in which things get logged after fork
+        # but before calling random.seed(), we
+        # call it here
+        random.seed()
+        c_record = ExceptionRecord(
+            # couchdbkit's uuid generation is not fork-safe
+            # so we generate a random id
+            _id=random_hex(),
+            function=record.funcName,
+            line_number=record.lineno,
+            level=record.levelname,
+            logger_name=record.name,
+            pathname=record.pathname,
+            message=record.getMessage(),
+            type=str(type),
+            stack_trace=traceback_string,
+            date=datetime.utcnow(),
+            url="",
+            query_params={}
+        )
         
         c_record.save()
         return c_record
