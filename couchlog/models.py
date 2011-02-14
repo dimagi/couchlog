@@ -115,7 +115,7 @@ class ExceptionRecord(Document):
                                  query_params={})
         record.save()
         # fire signal
-        signals.couchlog_created.send_robust(sender="couchlog", log=record)
+        signals.couchlog_created.send_robust(sender="couchlog", record=record)
         return record
     
     @classmethod
@@ -152,7 +152,7 @@ class ExceptionRecord(Document):
         c_record._id = random_hex()
         c_record.save()
         # fire signal
-        signals.couchlog_created.send_robust(sender="couchlog", log=c_record)
+        signals.couchlog_created.send(sender="couchlog", record=c_record)
         return c_record
         
 from couchlog import signals
