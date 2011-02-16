@@ -203,7 +203,7 @@ def email(request):
     
     try:
         email = EmailMessage("[COUCHLOG ERROR] %s" % truncate_words(log.message, 10), 
-                             email_body, name,
+                             email_body, "%s <%s>" % (name, settings.EMAIL_HOST_USER),
                              to, 
                              headers = {'Reply-To': reply_to})
         email.send(fail_silently=False)
