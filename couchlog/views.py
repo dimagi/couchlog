@@ -184,7 +184,6 @@ def email(request):
     """
     id = request.POST["id"]
     to = request.POST["to"].split(",")
-    print "email to: %s" % to
     notes = request.POST["notes"]
     log = ExceptionRecord.get(id)
     if request.user and not request.user.is_anonymous():
