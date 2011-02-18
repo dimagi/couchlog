@@ -18,7 +18,9 @@ from couchlog.models import ExceptionRecord
 from dimagi.utils.couch.pagination import CouchPaginator, LucenePaginator
 from couchlog import config 
 import logging
+from django.contrib.auth.decorators import permission_required
 
+@permission_required("is_superuser")
 def dashboard(request):
     """
     View all couch error data
@@ -53,6 +55,7 @@ def dashboard(request):
                                "support_email": config.SUPPORT_EMAIL },
                                context_instance=RequestContext(request))
 
+@permission_required("is_superuser")
 def single(request, log_id, display="full"):
     log = ExceptionRecord.get(log_id)
     if request.method == "POST":
@@ -93,7 +96,7 @@ def _record_to_json(error):
             "archive",
             "email"]
     
-
+@permission_required("is_superuser")
 def lucene_search(request, search_key, show_all):
     
     def wrapper(row):
@@ -107,7 +110,7 @@ def lucene_search(request, search_key, show_all):
     paginator = LucenePaginator("couchlog/search", wrapper)
     return paginator.get_ajax_response(request, search_key, extras={"iTotalRecords": total_records})
                                     
-    
+@permission_required("is_superuser")
 def paging(request):
     
     # what to show
@@ -128,10 +131,10 @@ def paging(request):
         """
         Given a row of the view, get out an exception record
         """
-        error = ExceptionRecord.wrap(row["value"])
+        error = ExceptionRecord.wrap(row["doc"])
         return _record_to_json(error)
         
-    paginator = CouchPaginator(view_name, wrapper_func, search=search)
+    paginator = CouchPaginator(view_name, wrapper_func, search=search, view_args={"include_docs": True})
     
     # get our previous start/end keys if necessary
     # NOTE: we don't actually do anything with these yet, but we should for 
@@ -154,6 +157,7 @@ def paging(request):
 
 
 @require_POST
+@permission_required("is_superuser")
 def update(request):
     """
     Update a couch log.
