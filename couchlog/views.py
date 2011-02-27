@@ -55,10 +55,12 @@ def dashboard(request):
                 rec_json_list = [record.to_json() for record in records]
                 get_db().bulk_delete(rec_json_list)
                 messages.success(request, "%s records successfully deleted." % len(records))
+    
     return render_to_response('couchlog/dashboard.html',
                               {"show" : show, "count": True,
                                "lucene_enabled": config.LUCENE_ENABLED,
-                               "support_email": config.SUPPORT_EMAIL },
+                               "support_email": config.SUPPORT_EMAIL,
+                               "config": config.COUCHLOG_TABLE_CONFIG},
                                context_instance=RequestContext(request))
 
 def single(request, log_id, display="full"):
@@ -90,6 +92,13 @@ def single(request, log_id, display="full"):
 
 def _record_to_json(error):
     """Shared by the wrappers"""
+    if config.COUCHLOG_RECORD_WRAPPER:
+        module = '.'.join(config.COUCHLOG_RECORD_WRAPPER.split('.')[:-1])
+        funcname = config.COUCHLOG_RECORD_WRAPPER.split('.')[-1]
+        m = __import__(module, fromlist=[''])
+        func = getattr(m, funcname)
+        return func(error)
+    
     def truncate(message, length=100, append="..."):
         if length < len(append):
             raise Exception("Can't truncate to less than %s characters!" % len(append))

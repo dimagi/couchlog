@@ -1,4 +1,5 @@
 {% extends "couchlog/base.html" %}
+{% load couchlog_tags %}
 {% block page_stylesheets %}
     {% include "couchlog/imports/blueprint.html" %}
     <link rel="stylesheet" href="{{MEDIA_URL}}couchlog/stylesheets/couchlog.css" type="text/css">
@@ -10,91 +11,22 @@
     {% include "couchlog/imports/datatables.html" %}
 {% endblock %}
 {% block page_javascripts %}
+    <script type="text/javascript" src="{{MEDIA_URL}}couchlog/js/logtable.js"></script>
     <script type="text/javascript">
     // datatable configuration.
     $(document).ready(function() {
-        filter = true;
-        not_sortable = [0,1,3,4,5,6,7];
-        sortable = [2];
-        $('.datatable').dataTable({
-            "bProcessing": true,
-            "bServerSide": true,
-            "bFilter": filter,
-            "bJQueryUI": true, 
-            "sAjaxSource": "{% url couchlog_paging %}",
-            "aaSorting": [[ 2, "desc" ]],
-            "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
-	            // annotate row with id
-	            $(nRow).attr("id", aData[0]);
-	            
-	            // annotate row with class
-	            if (aData[1] == "true") {
-	               $(nRow).addClass("archived");
-	            } else {
-	               $(nRow).addClass("inbox");
-	            }
-	            
-	            // remove added odd/even styles.  they mess with our custom classes
-	            // eh, this isn't so bad actually
-	            // $(nRow).removeClass("odd even");
-	            return nRow;
-	        },
-	        "fnServerData": function ( sSource, aoData, fnCallback ) {
-	            // add data to the post
-	            
-	            // are we in the inbox or all view
-	            aoData.push( { "name": "show", "value": "{{ show }}" } );
-	            
-	            // previous startkey, endkeys if any.
-	            // currently unused but may one day be necessary for paging                   
-                aoData.push( { "name": "startkey", "value": $("#startkey").val() } );
-	            aoData.push( { "name": "endkey", "value": $("#endkey").val() } );
-                
-	            $.getJSON( sSource, aoData, function(json) {
-                   // set startkey and endkey in their appropriate divs, these are
-                   // currently unused but may one day be necessary for paging	               
-	               $("#startkey").val(JSON.stringify(json.startkey));
-	               $("#endkey").val(JSON.stringify(json.endkey));
-	               fnCallback(json);
-	            });
-            },
-            "aoColumnDefs": [ 
-		            {
-		                "fnRender": function ( oObj ) {
-		                    if (!oObj.aData[4]) {
-		                        display = "UNKNOWN ERROR";
-		                    } else {
-		                        display = oObj.aData[4];
-		                    }
-		                    return '<a href="/couchlog/ajax/single/' + oObj.aData[0] + '" onclick="$(\'#modal-placeholder\').jqmShow($(this)); return false;"  class="logview">' + display +'</a>';
-		                },
-		                "aTargets": [ 4 ]
-		            }, 
-		            {
-                        "fnRender": function ( oObj ) {
-                            return '<a href="#" class="emaillink">report error</a>';
-                        },
-                        "aTargets": [ 7 ]
-                    }, 
-                    {
-                        "fnRender": function ( oObj ) {
-                            is_archived = oObj.aData[1] == "false";
-                            del_html = '<input type="button" class="updatebutton" action_type="delete" value="delete" />';
-                            if (is_archived) {
-                                arch_html = '<input type="button" class="updatebutton" action_type="archive" value="archive" />';
-                            } else {
-                                arch_html = '<input type="button" class="updatebutton" action_type="move_to_inbox" value="move to inbox" />';
-                            }
-                            return arch_html + del_html;
-                        },
-                        "aTargets": [ 6 ]
-                    }, 
-                    { "bVisible": false,  "aTargets": [ 0, 1 ] },
-		            { "bSortable": false, "aTargets": not_sortable}
-		            //{ "bSortable": true, "aTargets": sortable}, 
-                    //{ "sWidth": "40px", "aTargets": [ 6, 7 ] }		            
-	        ]
-        });
+        var filter = true;
+        var id_column = {{ config.id_column }};
+        var archived_column = {{ config.archived_column }};
+        var date_column = {{ config.date_column }};
+        var message_column = {{ config.message_column }};
+        var actions_column = {{ config.actions_column }};
+        var email_column = {{ config.email_column }};
+        var no_cols = {{ config.no_cols }};
+        var ajax_url = "{% url couchlog_paging %}";
+        init_log_table(filter, id_column, archived_column, date_column,
+                       message_column, actions_column, email_column, no_cols,
+                       ajax_url);
     } );
     </script>
     <script type="text/javascript">
@@ -243,16 +175,16 @@
 <table class="datatable" style="float:left;">
 <thead>
     <tr>
-        <th>id</th>
-        <th>archived?</th>
-	    <th>date</th>
-	    <th>type</th>
-	    <th>message</th>
-	    <!-- <th>stack_trace</th>  -->
-	    <th>url</th>
-	    <!-- <th>query params</th> -->
-	    <th></th>
-        <th></th>
+        {% for i in config.no_cols|get_range %}
+            <th>
+{% ifequal i config.id_column %}id{% endifequal %}
+{% ifequal i config.archived_column %}archived?{% endifequal %}
+{% ifequal i config.date_column %}date{% endifequal %}
+{% ifequal i config.message_column %}message{% endifequal %}
+{% ifequal i config.actions_column %}actions{% endifequal %}
+{% ifequal i config.email_column %}report{% endifequal %}
+            </th>
+        {% endfor %}
     </tr>
 </thead>
 <tbody>
