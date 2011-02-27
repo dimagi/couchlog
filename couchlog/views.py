@@ -1,14 +1,12 @@
-from datetime import datetime
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_POST
 import json
 from django.conf import settings
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.text import truncate_words
-from couchdbkit.client import View
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
@@ -18,6 +16,7 @@ from couchlog.models import ExceptionRecord
 from dimagi.utils.couch.pagination import CouchPaginator, LucenePaginator
 from couchlog import config 
 import logging
+from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 
 @permission_required("is_superuser")
@@ -30,11 +29,11 @@ def dashboard(request):
     # bulk archive a search
     if request.method == "POST":
         op = request.POST.get("op", "")
-        if op == "bulk_archive":
-            query = request.POST.get("query", "")
-            if query:
-                def get_matching_records(query):
-                    if config.LUCENE_ENABLED:
+        query = request.POST.get("query", "")
+        if query:
+            def get_matching_records(query, include_archived):
+                if config.LUCENE_ENABLED:
+                    if not include_archived:
                         query = "%s AND NOT archived" % query
                         limit = get_db().search("couchlog/search", handler="_fti/_design", 
                                                 q=query, limit=1).total_rows
@@ -43,16 +42,28 @@ def dashboard(request):
                         return [ExceptionRecord.wrap(res["doc"]) for res in matches]
                         
                     else:
-                        return ExceptionRecord.view("couchlog/inbox_by_msg", reduce=False, key=query).all() 
-                records = get_matching_records(query)
+                        if include_archived:
+                            return ExceptionRecord.view("couchlog/all_by_msg", reduce=False, key=query).all() 
+                        else:
+                            return ExceptionRecord.view("couchlog/inbox_by_msg", reduce=False, key=query).all() 
+            if op == "bulk_archive":
+                records = get_matching_records(query, False)
                 for record in records:
                     record.archived = True
                 ExceptionRecord.bulk_save(records)    
-                            
+                messages.success(request, "%s records successfully archived." % len(records))
+            elif op == "bulk_delete":
+                records = get_matching_records(query, show != "inbox")
+                rec_json_list = [record.to_json() for record in records]
+                get_db().bulk_delete(rec_json_list)
+                messages.success(request, "%s records successfully deleted." % len(records))
+    
     return render_to_response('couchlog/dashboard.html',
                               {"show" : show, "count": True,
                                "lucene_enabled": config.LUCENE_ENABLED,
-                               "support_email": config.SUPPORT_EMAIL },
+                               "support_email": config.SUPPORT_EMAIL,
+                               "config": config.COUCHLOG_TABLE_CONFIG,
+                               "display_cols": config.COUCHLOG_DISPLAY_COLS},
                                context_instance=RequestContext(request))
 
 @permission_required("is_superuser")
@@ -61,10 +72,16 @@ def single(request, log_id, display="full"):
     if request.method == "POST":
         action = request.POST.get("action", None)
         username = request.user.username if request.user and not request.user.is_anonymous() else "unknown"
-        if action == "archive":
+        if action == "delete":
+            log.delete()
+            messages.success(request, "Log was deleted!")
+            return HttpResponseRedirect(reverse("couchlog_home"))
+        elif action == "archive":
             log.archive(username)
+            messages.success(request, "Log was archived!")
         elif action == "move_to_inbox":
             log.reopen(username)
+            messages.success(request, "Log was moved!")
     
     if display == "ajax":
         template = "couchlog/ajax/single.html"
@@ -79,6 +96,13 @@ def single(request, log_id, display="full"):
 
 def _record_to_json(error):
     """Shared by the wrappers"""
+    if config.COUCHLOG_RECORD_WRAPPER:
+        module = '.'.join(config.COUCHLOG_RECORD_WRAPPER.split('.')[:-1])
+        funcname = config.COUCHLOG_RECORD_WRAPPER.split('.')[-1]
+        m = __import__(module, fromlist=[''])
+        func = getattr(m, funcname)
+        return func(error)
+    
     def truncate(message, length=100, append="..."):
         if length < len(append):
             raise Exception("Can't truncate to less than %s characters!" % len(append))
@@ -173,9 +197,13 @@ def update(request):
         text = "archived! press to undo"
         next_action = "move_to_inbox"
     elif action == "move_to_inbox":
-        log.reopen()
+        log.reopen(username)
         text = "moved! press to undo"
         next_action = "archive"
+    elif action == "delete":
+        log.delete()
+        text = "deleted!"
+        next_action = ""
     to_return = {"id": id, "text": text, "next_action": next_action,
                  "action": action, 
                  "style_class": "archived" if log.archived else "inbox"}

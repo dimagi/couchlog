@@ -1,12 +1,17 @@
 {% extends "couchlog/base.html" %}
 {% load i18n %}
 {% block page_stylesheets %}
-    {% include "imports/blueprint.html" %}
+    {% include "couchlog/imports/blueprint.html" %}
 <style> 
     .nav a {
         padding-right: 10px;
     }
-    form {
+    #archive_options form {
+        position: absolute;
+        right: 80px;
+        top: -1px;
+    }
+    #delete form {
         position: absolute;
         right: 0px;
         top: -1px;
@@ -14,8 +19,10 @@
 </style>
 {% endblock %}
 {% block content %}
+<div class="container">
 <div class="relative">
 	<h3>Exception Details</h3>
+	<div id="archive_options">
 	<form method="post">
 	{% if log.archived %}
 	    <input type="hidden" name="action" value="move_to_inbox" />
@@ -25,6 +32,13 @@
 	    <input type="submit" value="Archive" /> 
 	{% endif %}
 	</form>
+</div>
+	<div id="delete">
+    <form method="post">
+        <input type="hidden" name="action" value="delete" />
+        <input type="submit" value="Delete"/> 
+    </form>
+    </div>
 </div>
 <div align="center">
   <table border="0" style="border: 1px solid black; padding: 10px;">
@@ -42,6 +56,7 @@
 {% if user.is_superuser %}
     <a href="{% url futon log.get_id %}">view in futon</a>
 {% endif %}
+</div>
 </div>
 </div>
 {% endblock %}

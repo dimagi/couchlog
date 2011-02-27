@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+
 import random
 
 from couchdbkit.ext.django.schema import *
@@ -96,6 +97,7 @@ class ExceptionRecord(Document):
             record.put_attachment(request.raw_post_data, name="post_data", 
                                   content_type=request.META["CONTENT_TYPE"],
                                   content_length=len(request.raw_post_data))
+        
         return record
     
     @classmethod
@@ -112,6 +114,8 @@ class ExceptionRecord(Document):
                                  url="",
                                  query_params={})
         record.save()
+        # fire signal
+        signals.couchlog_created.send_robust(sender="couchlog", record=record)
         return record
     
     @classmethod
@@ -146,9 +150,9 @@ class ExceptionRecord(Document):
         # couchdbkit's uuid generation is not fork-safe
         # so we generate a random id
         c_record._id = random_hex()
-
         c_record.save()
-
+        # fire signal
+        signals.couchlog_created.send(sender="couchlog", record=c_record)
         return c_record
         
 from couchlog import signals

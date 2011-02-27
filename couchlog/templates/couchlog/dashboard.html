@@ -1,97 +1,32 @@
 {% extends "couchlog/base.html" %}
+{% load couchlog_tags %}
 {% block page_stylesheets %}
-    {% include "imports/blueprint.html" %}
+    {% include "couchlog/imports/blueprint.html" %}
+    <link rel="stylesheet" href="{{STATIC_URL}}couchlog/css/couchlog.css" type="text/css">
 {% endblock %}
 {% block javascripts %}
-    {% include "imports/jquery.html" %}
-    {% include "imports/jquery-ui.html" %}
-    {% include "imports/jqmodal.html" %}
-    {% include "imports/datatables.html" %}
+    {% include "couchlog/imports/jquery.html" %}
+    {% include "couchlog/imports/jquery-ui.html" %}
+    {% include "couchlog/imports/jqmodal.html" %}
+    {% include "couchlog/imports/datatables.html" %}
 {% endblock %}
 {% block page_javascripts %}
+    <script type="text/javascript" src="{{STATIC_URL}}couchlog/js/logtable.js"></script>
     <script type="text/javascript">
     // datatable configuration.
     $(document).ready(function() {
-        filter = true;
-        not_sortable = [0,1,3,4,5,6,7];
-        sortable = [2];
-        $('.datatable').dataTable({
-            "bProcessing": true,
-            "bServerSide": true,
-            "bFilter": filter,
-            "bJQueryUI": true, 
-            "sAjaxSource": "{% url couchlog_paging %}",
-            "aaSorting": [[ 2, "desc" ]],
-            "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
-	            // annotate row with id
-	            $(nRow).attr("id", aData[0]);
-	            
-	            // annotate row with class
-	            if (aData[1] == "true") {
-	               $(nRow).addClass("archived");
-	            } else {
-	               $(nRow).addClass("inbox");
-	            }
-	            
-	            // remove added odd/even styles.  they mess with our custom classes
-	            // eh, this isn't so bad actually
-	            // $(nRow).removeClass("odd even");
-	            return nRow;
-	        },
-	        "fnServerData": function ( sSource, aoData, fnCallback ) {
-	            // add data to the post
-	            
-	            // are we in the inbox or all view
-	            aoData.push( { "name": "show", "value": "{{ show }}" } );
-	            
-	            // previous startkey, endkeys if any.
-	            // currently unused but may one day be necessary for paging                   
-                aoData.push( { "name": "startkey", "value": $("#startkey").val() } );
-	            aoData.push( { "name": "endkey", "value": $("#endkey").val() } );
-                
-	            $.getJSON( sSource, aoData, function(json) {
-                   // set startkey and endkey in their appropriate divs, these are
-                   // currently unused but may one day be necessary for paging	               
-	               $("#startkey").val(JSON.stringify(json.startkey));
-	               $("#endkey").val(JSON.stringify(json.endkey));
-	               fnCallback(json);
-	            });
-            },
-            "aoColumnDefs": [ 
-		            {
-		                "fnRender": function ( oObj ) {
-		                    if (!oObj.aData[4]) {
-		                        display = "UNKNOWN ERROR";
-		                    } else {
-		                        display = oObj.aData[4];
-		                    }
-		                    return '<a href="/couchlog/ajax/single/' + oObj.aData[0] + '" onclick="$(\'#modal-placeholder\').jqmShow($(this)); return false;"  class="logview">' + display +'</a>';
-		                },
-		                "aTargets": [ 4 ]
-		            }, 
-		            {
-                        "fnRender": function ( oObj ) {
-                            return '<a href="#" class="emaillink">report error</a>';
-                        },
-                        "aTargets": [ 7 ]
-                    }, 
-                    {
-                        "fnRender": function ( oObj ) {
-                            is_archived = oObj.aData[1] == "false";
-                            if (is_archived) {
-                                return '<input type="button" class="updatebutton" action_type="archive" value="archive" />';
-                            } else {
-                                return '<input type="button" class="updatebutton" action_type="move_to_inbox" value="move to inbox" />';
-                            }
-                        },
-                        "aTargets": [ 6 ]
-                    }, 
-                    { "bVisible": false,  "aTargets": [ 0, 1 ] },
-		            { "bSortable": false, "aTargets": not_sortable}
-		            //{ "bSortable": true, "aTargets": sortable}, 
-                    //{ "sWidth": "40px", "aTargets": [ 6, 7 ] }		            
-	        ]
-        });
+        var filter = true;
+        var id_column = {{ config.id_column }};
+        var archived_column = {{ config.archived_column }};
+        var date_column = {{ config.date_column }};
+        var message_column = {{ config.message_column }};
+        var actions_column = {{ config.actions_column }};
+        var email_column = {{ config.email_column }};
+        var no_cols = {{ config.no_cols }};
+        var ajax_url = "{% url couchlog_paging %}";
+        init_log_table(filter, id_column, archived_column, date_column,
+                       message_column, actions_column, email_column, no_cols,
+                       ajax_url);
     } );
     </script>
     <script type="text/javascript">
@@ -104,6 +39,10 @@
             function(data){
                 json_res = JSON.parse(data);
                 row_elem = $($("#" + json_res.id)[0]);
+                if (button.attr("action_type") == "delete") {
+                    row_elem.fadeOut(100);
+                }
+                else {
                 {% ifequal show "inbox" %}
                 // if we're showing the inbox just hide the row with a pretty effect
                 row_elem.fadeOut(100);
@@ -114,6 +53,7 @@
                 button_elem.val(json_res.text);
                 button_elem.attr("action_type", json_res.next_action);
                 {% endifequal %}
+                }
             }); 
         });
         
@@ -134,7 +74,21 @@
                 alert("Sorry, you can't archive EVERYTHING. To archive in bulk, first perform a search.");  
             }
         });
-        
+        // and "delete all"
+        $("#delete_all").live("click", 
+        function () {
+            input = $($($(".dataTables_filter")[0]).find("input")[0]);
+            search_query = input.val();
+            if (search_query) { 
+                var sure = confirm("Really delete everything matching '" + search_query + "'?  This is NOT an undoable operation!");
+                if (sure) {
+                    // actually archive
+                    submit_redirect({op: "bulk_delete", query: search_query});
+                }
+            } else {
+                alert("Sorry, you can't delete EVERYTHING. To delete in bulk, first perform a search.");  
+            }
+        });
     </script>
     <script type="text/javascript">
     $(function() {
@@ -212,6 +166,7 @@
 </ul>
 <div>
 <input id="archive_all" type="button" action_type="archive" value="Archive all" style="float:right;"/>
+<input id="delete_all" type="button" action_type="delete" value="Delete all" style="float:right; margin-right:5px;"/>
 </div> 
 
 {% if count %}
@@ -220,16 +175,9 @@
 <table class="datatable" style="float:left;">
 <thead>
     <tr>
-        <th>id</th>
-        <th>archived?</th>
-	    <th>date</th>
-	    <th>type</th>
-	    <th>message</th>
-	    <!-- <th>stack_trace</th>  -->
-	    <th>url</th>
-	    <!-- <th>query params</th> -->
-	    <th></th>
-        <th></th>
+        {% for col in display_cols %}
+            <th>{{ col }}</th>
+        {% endfor %}
     </tr>
 </thead>
 <tbody>

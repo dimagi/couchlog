@@ -1,6 +1,9 @@
 from django.core.signals import got_request_exception
 from django.conf import settings
+from django.dispatch.dispatcher import Signal
 #from dimagi.utils.logging.signals import exception_logged
+
+couchlog_created = Signal(providing_args=["record"])
 
 def log_request_exception(sender, request, **kwargs):
     from couchlog.models import ExceptionRecord
