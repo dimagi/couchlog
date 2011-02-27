@@ -2,7 +2,7 @@
 {% load couchlog_tags %}
 {% block page_stylesheets %}
     {% include "couchlog/imports/blueprint.html" %}
-    <link rel="stylesheet" href="{{MEDIA_URL}}couchlog/stylesheets/couchlog.css" type="text/css">
+    <link rel="stylesheet" href="{{STATIC_URL}}couchlog/css/couchlog.css" type="text/css">
 {% endblock %}
 {% block javascripts %}
     {% include "couchlog/imports/jquery.html" %}
@@ -11,7 +11,7 @@
     {% include "couchlog/imports/datatables.html" %}
 {% endblock %}
 {% block page_javascripts %}
-    <script type="text/javascript" src="{{MEDIA_URL}}couchlog/js/logtable.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}couchlog/js/logtable.js"></script>
     <script type="text/javascript">
     // datatable configuration.
     $(document).ready(function() {
