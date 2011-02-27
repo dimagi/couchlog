@@ -16,6 +16,7 @@
     // datatable configuration.
     $(document).ready(function() {
         var filter = true;
+        var show = "{{ show }}"; 
         var id_column = {{ config.id_column }};
         var archived_column = {{ config.archived_column }};
         var date_column = {{ config.date_column }};
@@ -26,7 +27,7 @@
         var ajax_url = "{% url couchlog_paging %}";
         init_log_table(filter, id_column, archived_column, date_column,
                        message_column, actions_column, email_column, no_cols,
-                       ajax_url);
+                       show, ajax_url);
     } );
     </script>
     <script type="text/javascript">
@@ -171,8 +172,8 @@
 
 {% if count %}
 
-<br></br>
-<table class="datatable" style="float:left;">
+<br><br><br>
+<table class="datatable" style="">
 <thead>
     <tr>
         {% for col in display_cols %}
@@ -192,14 +193,14 @@
         <input type="hidden" value="not_set" id="log_holder"></input>
         <label for="email">Email</label>
         <input type="text" name="email" id="email" value="{{ support_email }}" class="text" />
-        <br></br>
+        <br>
         <label for="notes">Additional Notes</label>
-        <textarea id="notes" value=""></textarea>
+        <textarea id="notes" ></textarea>
     </fieldset>
     </form>
 </div>
 {% else %}
-<br></br>
+<br>
 <h3 style="padding-top:50px; ">Hooray! Nothing bad to see here.</h3>
 {% endif %}
 {% endblock %}

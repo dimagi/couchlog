@@ -1,6 +1,6 @@
 function init_log_table(filter, id_column, archived_column, date_column,
                         message_column, actions_column, email_column, no_cols,
-                        ajax_url) 
+                        show, ajax_url) 
 {
     var not_sortable = [];
     for (i=0; i<no_cols; i++) {
@@ -35,7 +35,7 @@ function init_log_table(filter, id_column, archived_column, date_column,
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             // add data to the post
             // are we in the inbox or all view
-            aoData.push( { "name": "show", "value": "{{ show }}" } );
+            aoData.push( { "name": "show", "value": show} );
             
             // previous startkey, endkeys if any.
             // currently unused but may one day be necessary for paging                   
