@@ -16,7 +16,7 @@ _DEFAULT_TABLE_CONFIG = {"id_column":       0,
                          "email_column":    7,
                          "no_cols":         8}
 
-_DEFAULT_DISPLAY_COLS = ["id", "archived?", "date", "", "message", "", "actions", "report"]
+_DEFAULT_DISPLAY_COLS = ["id", "archived?", "date", "", "message", "url", "actions", "report"]
 
 COUCHLOG_TABLE_CONFIG = getattr(settings, "COUCHLOG_TABLE_CONFIG", _DEFAULT_TABLE_CONFIG)
 COUCHLOG_DISPLAY_COLS = getattr(settings, "COUCHLOG_DISPLAY_COLS", _DEFAULT_DISPLAY_COLS)
