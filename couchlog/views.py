@@ -1,14 +1,12 @@
-from datetime import datetime
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_POST
 import json
 from django.conf import settings
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.text import truncate_words
-from couchdbkit.client import View
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
@@ -18,6 +16,7 @@ from couchlog.models import ExceptionRecord
 from dimagi.utils.couch.pagination import CouchPaginator, LucenePaginator
 from couchlog import config 
 import logging
+from django.contrib import messages
 
 def dashboard(request):
     """
@@ -41,10 +40,10 @@ def dashboard(request):
                         return [ExceptionRecord.wrap(res["doc"]) for res in matches]
                         
                     else:
-                    if include_archived:
-                        return ExceptionRecord.view("couchlog/all_by_msg", reduce=False, key=query).all() 
-                    else:
-                        return ExceptionRecord.view("couchlog/inbox_by_msg", reduce=False, key=query).all() 
+                        if include_archived:
+                            return ExceptionRecord.view("couchlog/all_by_msg", reduce=False, key=query).all() 
+                        else:
+                            return ExceptionRecord.view("couchlog/inbox_by_msg", reduce=False, key=query).all() 
             if op == "bulk_archive":
                 records = get_matching_records(query, False)
                 for record in records:

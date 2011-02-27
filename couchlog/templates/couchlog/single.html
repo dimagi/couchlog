@@ -19,6 +19,7 @@
 </style>
 {% endblock %}
 {% block content %}
+<div class="container">
 <div class="relative">
 	<h3>Exception Details</h3>
 	<div id="archive_options">
@@ -58,6 +59,7 @@
 {% if user.is_superuser %}
     <a href="{% url futon log.get_id %}">view in futon</a>
 {% endif %}
+</div>
 </div>
 </div>
 {% endblock %}
