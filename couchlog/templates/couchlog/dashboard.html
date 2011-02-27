@@ -175,15 +175,8 @@
 <table class="datatable" style="float:left;">
 <thead>
     <tr>
-        {% for i in config.no_cols|get_range %}
-            <th>
-{% ifequal i config.id_column %}id{% endifequal %}
-{% ifequal i config.archived_column %}archived?{% endifequal %}
-{% ifequal i config.date_column %}date{% endifequal %}
-{% ifequal i config.message_column %}message{% endifequal %}
-{% ifequal i config.actions_column %}actions{% endifequal %}
-{% ifequal i config.email_column %}report{% endifequal %}
-            </th>
+        {% for col in display_cols %}
+            <th>{{ col }}</th>
         {% endfor %}
     </tr>
 </thead>

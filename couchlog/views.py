@@ -62,7 +62,8 @@ def dashboard(request):
                               {"show" : show, "count": True,
                                "lucene_enabled": config.LUCENE_ENABLED,
                                "support_email": config.SUPPORT_EMAIL,
-                               "config": config.COUCHLOG_TABLE_CONFIG},
+                               "config": config.COUCHLOG_TABLE_CONFIG,
+                               "display_cols": config.COUCHLOG_DISPLAY_COLS},
                                context_instance=RequestContext(request))
 
 @permission_required("is_superuser")
