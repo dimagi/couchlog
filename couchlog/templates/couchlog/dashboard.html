@@ -79,11 +79,13 @@
                     {
                         "fnRender": function ( oObj ) {
                             is_archived = oObj.aData[1] == "false";
+                            del_html = '<input type="button" class="updatebutton" action_type="delete" value="delete" />';
                             if (is_archived) {
-                                return '<input type="button" class="updatebutton" action_type="archive" value="archive" />';
+                                arch_html = '<input type="button" class="updatebutton" action_type="archive" value="archive" />';
                             } else {
-                                return '<input type="button" class="updatebutton" action_type="move_to_inbox" value="move to inbox" />';
+                                arch_html = '<input type="button" class="updatebutton" action_type="move_to_inbox" value="move to inbox" />';
                             }
+                            return arch_html + del_html;
                         },
                         "aTargets": [ 6 ]
                     }, 
@@ -105,6 +107,10 @@
             function(data){
                 json_res = JSON.parse(data);
                 row_elem = $($("#" + json_res.id)[0]);
+                if (button.attr("action_type") == "delete") {
+                    row_elem.fadeOut(100);
+                }
+                else {
                 {% ifequal show "inbox" %}
                 // if we're showing the inbox just hide the row with a pretty effect
                 row_elem.fadeOut(100);
@@ -115,6 +121,7 @@
                 button_elem.val(json_res.text);
                 button_elem.attr("action_type", json_res.next_action);
                 {% endifequal %}
+                }
             }); 
         });
         
@@ -135,7 +142,21 @@
                 alert("Sorry, you can't archive EVERYTHING. To archive in bulk, first perform a search.");  
             }
         });
-        
+        // and "delete all"
+        $("#delete_all").live("click", 
+        function () {
+            input = $($($(".dataTables_filter")[0]).find("input")[0]);
+            search_query = input.val();
+            if (search_query) { 
+                var sure = confirm("Really delete everything matching '" + search_query + "'?  This is NOT an undoable operation!");
+                if (sure) {
+                    // actually archive
+                    submit_redirect({op: "bulk_delete", query: search_query});
+                }
+            } else {
+                alert("Sorry, you can't delete EVERYTHING. To delete in bulk, first perform a search.");  
+            }
+        });
     </script>
     <script type="text/javascript">
     $(function() {
@@ -213,6 +234,7 @@
 </ul>
 <div>
 <input id="archive_all" type="button" action_type="archive" value="Archive all" style="float:right;"/>
+<input id="delete_all" type="button" action_type="delete" value="Delete all" style="float:right; margin-right:5px;"/>
 </div> 
 
 {% if count %}
