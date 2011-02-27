@@ -84,9 +84,9 @@ function init_log_table(filter, id_column, archived_column, date_column,
                 { "bVisible": false,  "aTargets": [ id_column, archived_column ] },
                 { "bSortable": false, "aTargets": not_sortable},
                 //{ "bSortable": true, "aTargets": sortable}, 
-                { "sWidth": "10em", "aTargets": [ date_column ] },
+                { "sWidth": "11em", "aTargets": [ date_column ] },
                 { "sWidth": "7em", "aTargets": [ email_column ] },
-                { "sWidth": "10em", "aTargets": [ actions_column ] }
+                { "sWidth": "11em", "aTargets": [ actions_column ] }
         ]
     });
 }
