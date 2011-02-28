@@ -98,6 +98,7 @@ class ExceptionRecord(Document):
                                   content_type=request.META["CONTENT_TYPE"],
                                   content_length=len(request.raw_post_data))
         
+        signals.couchlog_created.send_robust(sender="couchlog", record=record)
         return record
     
     @classmethod
