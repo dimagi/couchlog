@@ -1,4 +1,5 @@
 {% extends "couchlog/base.html" %}
+{% load couchlog_tags %}
 {% load i18n %}
 {% block page_stylesheets %}
     {% include "couchlog/imports/blueprint.html" %}
@@ -50,6 +51,9 @@
     <tr><td>Stack Trace:&nbsp;&nbsp;</td><td><strong>{{ log.stack_trace|linebreaksbr }}</strong></td></tr>
     <tr><td>Url:&nbsp;&nbsp;</td><td><strong>{{ log.url|default:"N/A" }}</strong></td></tr>
     <tr><td>Query Params:&nbsp;&nbsp;</td><td><strong>{{ log.query_params|default:"N/A" }}</strong></td></tr>
+{% for item in log.dynamic_properties %}
+    <tr><td>{{ item }}:&nbsp;&nbsp;</td><td><strong>{{ log|get_attr:item|default:"N/A" }}</strong></td></tr>
+{% endfor %}
   </table>
 <div class="nav">
     <a href="{% url couchlog_home %}">all couchlog errors</a>
