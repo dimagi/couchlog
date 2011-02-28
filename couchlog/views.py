@@ -35,17 +35,17 @@ def dashboard(request):
                 if config.LUCENE_ENABLED:
                     if not include_archived:
                         query = "%s AND NOT archived" % query
-                        limit = get_db().search("couchlog/search", handler="_fti/_design", 
-                                                q=query, limit=1).total_rows
-                        matches = get_db().search("couchlog/search", handler="_fti/_design", 
-                                                  q=query, limit=limit, include_docs=True)
-                        return [ExceptionRecord.wrap(res["doc"]) for res in matches]
-                        
+                    limit = get_db().search("couchlog/search", handler="_fti/_design", 
+                                            q=query, limit=1).total_rows
+                    matches = get_db().search("couchlog/search", handler="_fti/_design", 
+                                              q=query, limit=limit, include_docs=True)
+                    return [ExceptionRecord.wrap(res["doc"]) for res in matches]
+                    
+                else:
+                    if include_archived:
+                        return ExceptionRecord.view("couchlog/all_by_msg", reduce=False, key=query, include_docs=True).all() 
                     else:
-                        if include_archived:
-                            return ExceptionRecord.view("couchlog/all_by_msg", reduce=False, key=query).all() 
-                        else:
-                            return ExceptionRecord.view("couchlog/inbox_by_msg", reduce=False, key=query).all() 
+                        return ExceptionRecord.view("couchlog/inbox_by_msg", reduce=False, key=query, include_docs=True).all() 
             if op == "bulk_archive":
                 records = get_matching_records(query, False)
                 for record in records:
