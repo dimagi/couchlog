@@ -35,9 +35,9 @@ def dashboard(request):
                 if config.LUCENE_ENABLED:
                     if not include_archived:
                         query = "%s AND NOT archived" % query
-                    limit = get_db().search("couchlog/search", handler="_fti/_design", 
+                    limit = get_db().search(config.COUCHLOG_LUCENE_VIEW, handler="_fti/_design", 
                                             q=query, limit=1).total_rows
-                    matches = get_db().search("couchlog/search", handler="_fti/_design", 
+                    matches = get_db().search(config.COUCHLOG_LUCENE_VIEW, handler="_fti/_design", 
                                               q=query, limit=limit, include_docs=True)
                     return [ExceptionRecord.wrap(res["doc"]) for res in matches]
                     
@@ -131,7 +131,7 @@ def lucene_search(request, search_key, show_all):
     if not show_all:
         search_key = "%s AND NOT archived" % search_key
     total_records = get_db().view("couchlog/count").one()["value"]
-    paginator = LucenePaginator("couchlog/search", wrapper)
+    paginator = LucenePaginator(config.COUCHLOG_LUCENE_VIEW, wrapper)
     return paginator.get_ajax_response(request, search_key, extras={"iTotalRecords": total_records})
                                     
 @permission_required("is_superuser")

@@ -2,6 +2,7 @@ from django.conf import settings
 import logging
 
 LUCENE_ENABLED = getattr(settings, "LUCENE_ENABLED", False)
+COUCHLOG_LUCENE_VIEW = getattr(settings, "COUCHLOG_LUCENE_VIEW", "couchlog/search")
 SUPPORT_EMAIL = getattr(settings, "SUPPORT_EMAIL", None)
 
 COUCHLOG_ENABLED = getattr(settings, "COUCHLOG_ENABLED", True)
