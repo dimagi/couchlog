@@ -1,5 +1,6 @@
-{% extends "layout.html" %}
+{% extends "couchlog/base.html" %}
 {% block page_stylesheets %}
+    {% include "couchlog/imports/blueprint.html" %}
 <style type="text/css">
     .example { border-top: 1px solid silver; padding-top:5px; font-weight:bold;}
     /* .searchtext { background-color: #eeeeee;} */
@@ -8,6 +9,8 @@
 </style>
 {% endblock %}
 {% block content %}
+<div class="container">
+<h2>Couchlog Search Docs</h2>
 <p>Advanced search lets you do freetext searches as well as searches on specific fields using the 
 <a href="http://lucene.apache.org/java/2_4_0/queryparsersyntax.html">lucene query syntax</a>.  Review
 the documentation there for detailed information.  For couchlog, the message, type, and url
@@ -40,4 +43,5 @@ are searched by default.  Additionally the following fields can be searched:</p>
 <pre class="searchtext">files AND date:[2010-10-01 TO 2010-11-01]</pre>
 
 You can do lots of complicated things!
+</div>
 {% endblock %}

@@ -3,6 +3,7 @@ import logging
 
 LUCENE_ENABLED = getattr(settings, "LUCENE_ENABLED", False)
 COUCHLOG_LUCENE_VIEW = getattr(settings, "COUCHLOG_LUCENE_VIEW", "couchlog/search")
+COUCHLOG_LUCENE_DOC_TEMPLATE = getattr(settings, "COUCHLOG_LUCENE_DOC_TEMPLATE", "couchlog/lucene_docs.html")
 SUPPORT_EMAIL = getattr(settings, "SUPPORT_EMAIL", None)
 
 COUCHLOG_ENABLED = getattr(settings, "COUCHLOG_ENABLED", True)

@@ -248,4 +248,4 @@ def email(request):
                                         "message": str(e)}))
         
 def lucene_docs(request):
-    return render_to_response("couchlog/lucene_docs.html", RequestContext(request))
+    return render_to_response(config.COUCHLOG_LUCENE_DOC_TEMPLATE, RequestContext(request))
