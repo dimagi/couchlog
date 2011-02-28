@@ -5,6 +5,9 @@ function(doc) {
             var ret=new Document(); 
             ret.add(doc.message, {"field": "default"}); 
             ret.add(doc.date, {"field": "date"}); 
+            if (doc.level) {
+                ret.add(doc.level, {"field": "level"});
+            } 
             if (doc.url) {
                 ret.add(doc.url, {"field": "default"});
             }
