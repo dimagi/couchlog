@@ -36,13 +36,13 @@ class LogTestCase(TestCase):
         try:
             raise CouchLogTestException("Exceptional fail!")
         except Exception, e:
-            logging.exception(e)
+            logging.exception("some other message")
         
         self.assertEqual(1, len(ExceptionRecord.view("couchlog/all_by_date", include_docs=True).all()))
         log = ExceptionRecord.view("couchlog/all_by_date", include_docs=True).one()
         self.assertTrue("tests.py" in log.stack_trace)
         self.assertTrue("CouchLogTestException" in log.type)
-        self.assertEqual("Exceptional fail!", log.message)
+        self.assertEqual("some other message", log.message)
         
         
     

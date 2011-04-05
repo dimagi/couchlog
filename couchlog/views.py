@@ -242,7 +242,7 @@ def email(request):
         return HttpResponse(json.dumps({"id": id,
                                         "success": True}))
     except Exception, e:
-        logging.exception(e)
+        logging.exception("problem sending couchlog mail")
         return HttpResponse(json.dumps({"id": id,
                                         "success": False, 
                                         "message": str(e)}))
