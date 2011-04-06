@@ -63,7 +63,8 @@ def dashboard(request):
                                "lucene_enabled": config.LUCENE_ENABLED,
                                "support_email": config.SUPPORT_EMAIL,
                                "config": config.COUCHLOG_TABLE_CONFIG,
-                               "display_cols": config.COUCHLOG_DISPLAY_COLS},
+                               "display_cols": config.COUCHLOG_DISPLAY_COLS,
+                               "couchlog_config": config},
                                context_instance=RequestContext(request))
 
 @permission_required("is_superuser")
@@ -90,7 +91,8 @@ def single(request, log_id, display="full"):
     else:
         raise ValueError("Unknown display type: %s" % display)
     return render_to_response(template, 
-                              {"log": log},
+                              {"log": log,
+                               "couchlog_config": config},
                               context_instance=RequestContext(request))
 
 
@@ -248,4 +250,5 @@ def email(request):
                                         "message": str(e)}))
         
 def lucene_docs(request):
-    return render_to_response(config.COUCHLOG_LUCENE_DOC_TEMPLATE, RequestContext(request))
+    return render_to_response(config.COUCHLOG_LUCENE_DOC_TEMPLATE, RequestContext(request),  
+                              {"couchlog_config": config})
