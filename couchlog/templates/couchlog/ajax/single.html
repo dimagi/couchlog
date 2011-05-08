@@ -29,9 +29,6 @@
   </table>
 <div class="nav">
     <a href="{% url couchlog_single log.get_id %}" target="_blank">new window</a>
-{% if user.is_superuser %}
-    <a href="{% url futon log.get_id %}">view in futon</a>
-{% endif %}
 </div>
 </div>
 </body>

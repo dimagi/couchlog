@@ -57,9 +57,6 @@
   </table>
 <div class="nav">
     <a href="{% url couchlog_home %}">all couchlog errors</a>
-{% if user.is_superuser %}
-    <a href="{% url futon log.get_id %}">view in futon</a>
-{% endif %}
 </div>
 </div>
 </div>
