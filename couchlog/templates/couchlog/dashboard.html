@@ -71,7 +71,7 @@
                 var sure = confirm("Really archive everything matching '" + search_query + "'?  This is NOT an undoable operation!");
                 if (sure) {
                     // actually archive
-                    submit_redirect({op: "bulk_archive", query: search_query});
+                    submit_redirect({op: "bulk_archive", query: search_query, csrfmiddlewaretoken: "{{ csrf_token }}"});
                 }
             } else {
                 alert("Sorry, you can't archive EVERYTHING. To archive in bulk, first perform a search.");  
@@ -86,7 +86,7 @@
                 var sure = confirm("Really delete everything matching '" + search_query + "'?  This is NOT an undoable operation!");
                 if (sure) {
                     // actually archive
-                    submit_redirect({op: "bulk_delete", query: search_query});
+                    submit_redirect({op: "bulk_delete", query: search_query, csrfmiddlewaretoken: "{{ csrf_token }}"});
                 }
             } else {
                 alert("Sorry, you can't delete EVERYTHING. To delete in bulk, first perform a search.");  
