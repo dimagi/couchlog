@@ -121,7 +121,11 @@ def _record_to_json(error):
             error.url,
             "archive",
             "email"]
-    
+
+def _couchlog_count():
+    count_results = get_db().view("couchlog/count").one()
+    return count_results["value"] if count_results else 0
+
 @permission_required("is_superuser")
 def lucene_search(request, search_key, show_all):
     
@@ -132,7 +136,8 @@ def lucene_search(request, search_key, show_all):
     
     if not show_all:
         search_key = "%s AND NOT archived" % search_key
-    total_records = get_db().view("couchlog/count").one()["value"]
+    
+    total_records = _couchlog_count()
     paginator = LucenePaginator(config.COUCHLOG_LUCENE_VIEW, wrapper)
     return paginator.get_ajax_response(request, search_key, extras={"iTotalRecords": total_records})
                                     
@@ -173,7 +178,8 @@ def paging(request):
     if endkey:
         endkey = json.loads(endkey)
     
-    total_records = get_db().view("couchlog/count").one()["value"]
+    
+    total_records = _couchlog_count()
     
     return paginator.get_ajax_response(request, extras={"startkey": startkey,
                                                         "endkey": endkey,
