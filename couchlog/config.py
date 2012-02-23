@@ -6,7 +6,7 @@ COUCHLOG_LUCENE_VIEW = getattr(settings, "COUCHLOG_LUCENE_VIEW", "couchlog/searc
 COUCHLOG_LUCENE_DOC_TEMPLATE = getattr(settings, "COUCHLOG_LUCENE_DOC_TEMPLATE", "couchlog/lucene_docs.html")
 SUPPORT_EMAIL = getattr(settings, "SUPPORT_EMAIL", None)
 
-COUCHLOG_ENABLED = getattr(settings, "COUCHLOG_ENABLED", True)
+COUCHLOG_ENABLED = getattr(settings, "COUCHLOG_ENABLED", False)
 COUCHLOG_THRESHOLD = getattr(settings, "COUCHLOG_THRESHOLD", logging.ERROR)
 
 
