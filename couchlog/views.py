@@ -11,7 +11,6 @@ from django.utils.html import escape
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 
-from dimagi.utils.couch.database import get_db
 from couchlog.models import ExceptionRecord
 from dimagi.utils.couch.pagination import CouchPaginator, LucenePaginator
 from couchlog import config 
@@ -35,9 +34,9 @@ def dashboard(request):
                 if config.LUCENE_ENABLED:
                     if not include_archived:
                         query = "%s AND NOT archived" % query
-                    limit = get_db().search(config.COUCHLOG_LUCENE_VIEW, handler="_fti/_design", 
+                    limit = ExceptionRecord.get_db().search(config.COUCHLOG_LUCENE_VIEW, handler="_fti/_design",
                                             q=query, limit=1).total_rows
-                    matches = get_db().search(config.COUCHLOG_LUCENE_VIEW, handler="_fti/_design", 
+                    matches = ExceptionRecord.get_db().search(config.COUCHLOG_LUCENE_VIEW, handler="_fti/_design",
                                               q=query, limit=limit, include_docs=True)
                     return [ExceptionRecord.wrap(res["doc"]) for res in matches]
                     
@@ -55,7 +54,7 @@ def dashboard(request):
             elif op == "bulk_delete":
                 records = get_matching_records(query, show != "inbox")
                 rec_json_list = [record.to_json() for record in records]
-                get_db().bulk_delete(rec_json_list)
+                ExceptionRecord.get_db().bulk_delete(rec_json_list)
                 messages.success(request, "%s records successfully deleted." % len(records))
     
     return render_to_response('couchlog/dashboard.html',
@@ -123,7 +122,7 @@ def _record_to_json(error):
             "email"]
 
 def _couchlog_count():
-    count_results = get_db().view("couchlog/count").one()
+    count_results = ExceptionRecord.get_db().view("couchlog/count").one()
     return count_results["value"] if count_results else 0
 
 @permission_required("is_superuser")
