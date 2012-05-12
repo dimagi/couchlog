@@ -70,7 +70,7 @@ function init_log_table(filter, id_column, archived_column, date_column,
                 }, 
                 {
                     "fnRender": function ( oObj ) {
-                        is_archived = oObj.aData[archived_column] == "false";
+                        is_archived = oObj.aData[archived_column] === false;
                         del_html = '<input type="button" class="updatebutton" action_type="delete" value="delete" />';
                         if (is_archived) {
                             arch_html = '<input type="button" class="updatebutton" action_type="archive" value="archive" />';
