@@ -121,6 +121,7 @@ def _record_to_json(error):
             error.date.strftime('%Y-%m-%d %H:%M:%S') if error.date else "", 
             format_type(error.type), 
             truncate(error.message), 
+            error.user,
             error.url,
             "archive",
             "email"]

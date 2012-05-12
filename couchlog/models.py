@@ -31,6 +31,7 @@ class ExceptionRecord(Document):
     
     # django-specific (for RequestException)
     url = StringProperty()
+    user = StringProperty()
     query_params = DictProperty()
     
     # lifecycle
@@ -73,6 +74,7 @@ class ExceptionRecord(Document):
         that generated it)
         """
         url = request.build_absolute_uri()
+        user = request.user.username if request.user else ""
         use_raw_data = False
         if request.method == "GET":
             query_params = request.GET
@@ -91,6 +93,7 @@ class ExceptionRecord(Document):
                                  stack_trace=traceback_string,
                                  date=datetime.utcnow(),
                                  url=url,
+                                 user=user,
                                  query_params=query_params)
         record.save()
         if use_raw_data:
