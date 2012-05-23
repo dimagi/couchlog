@@ -142,7 +142,8 @@ def lucene_search(request, search_key, show_all):
         search_key = "%s AND NOT archived" % search_key
     
     total_records = _couchlog_count()
-    paginator = LucenePaginator(config.COUCHLOG_LUCENE_VIEW, wrapper)
+    paginator = LucenePaginator(config.COUCHLOG_LUCENE_VIEW, wrapper, 
+                                database=ExceptionRecord.get_db())
     return paginator.get_ajax_response(request, search_key, extras={"iTotalRecords": total_records})
                                     
 @permission_required("is_superuser")
@@ -169,7 +170,9 @@ def paging(request):
         error = ExceptionRecord.wrap(row["doc"])
         return _record_to_json(error)
         
-    paginator = CouchPaginator(view_name, wrapper_func, search=search, view_args={"include_docs": True})
+    paginator = CouchPaginator(view_name, wrapper_func, search=search, 
+                               view_args={"include_docs": True},
+                               database=ExceptionRecord.get_db())
     
     # get our previous start/end keys if necessary
     # NOTE: we don't actually do anything with these yet, but we should for 
