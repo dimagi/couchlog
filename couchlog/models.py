@@ -74,7 +74,7 @@ class ExceptionRecord(Document):
         that generated it)
         """
         url = request.build_absolute_uri()
-        user = request.user.username if request.user else ""
+        user = request.user.username if getattr(request, 'user', None) else ""
         use_raw_data = False
         if request.method == "GET":
             query_params = request.GET
