@@ -88,8 +88,12 @@ class ExceptionRecord(Document):
             query_params = {} if use_raw_data else request.POST
         type, exc, tb = sys.exc_info()
         traceback_string = "".join(traceback.format_tb(tb))
+        try:
+            msg = str(exc)
+        except UnicodeEncodeError:
+            msg = unicode(exc)
         record = ExceptionRecord(type=str(type),
-                                 message=str(exc),
+                                 message=msg,
                                  stack_trace=traceback_string,
                                  date=datetime.utcnow(),
                                  url=url,
