@@ -17,6 +17,8 @@ from couchlog import config
 import logging
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from dimagi.utils.modules import to_function
+
 
 def fail(request):
     # if you want to play with it, wire this to a url
@@ -102,12 +104,8 @@ def single(request, log_id, display="full"):
 def _record_to_json(error):
     """Shared by the wrappers"""
     if config.COUCHLOG_RECORD_WRAPPER:
-        module = '.'.join(config.COUCHLOG_RECORD_WRAPPER.split('.')[:-1])
-        funcname = config.COUCHLOG_RECORD_WRAPPER.split('.')[-1]
-        m = __import__(module, fromlist=[''])
-        func = getattr(m, funcname)
-        return func(error)
-    
+        return to_function(config.COUCHLOG_RECORD_WRAPPER, failhard=True)(error)
+
     def truncate(message, length=100, append="..."):
         if length < len(append):
             raise Exception("Can't truncate to less than %s characters!" % len(append))
