@@ -26,7 +26,7 @@
         var actions_column = {{ config.actions_column }};
         var email_column = {{ config.email_column }};
         var no_cols = {{ config.no_cols }};
-        var ajax_url = "{% url couchlog_paging %}";
+        var ajax_url = "{% url 'couchlog_paging' %}";
         init_log_table(filter, id_column, archived_column, date_column,
                        message_column, actions_column, email_column, no_cols,
                        show, ajax_url);
@@ -38,7 +38,7 @@
         function () {
             button = $(this);
             id = button.parent().parent().attr("id");
-            jQuery.post("{% url couchlog_update %}", { "id": id, "action": button.attr("action_type")},
+            jQuery.post("{% url 'couchlog_update' %}", { "id": id, "action": button.attr("action_type")},
             function(data){
                 json_res = JSON.parse(data);
                 row_elem = $($("#" + json_res.id)[0]);
@@ -107,7 +107,7 @@
             buttons: {
                 'Send report': function() {
                     id = $("#log_holder").val();
-                    jQuery.post("{% url couchlog_email %}", { "id": id,
+                    jQuery.post("{% url 'couchlog_email' %}", { "id": id,
                                                       "to": $("#email").val(),
                                                       "notes": $("#notes").val()},
 			            function(data){
@@ -159,7 +159,7 @@
 {% block content %}
 {% if lucene_enabled %}
     <p class="notice">Advanced search is enabled!  For documentation on how to do advanced searches, 
-    <a href="{% url lucene_docs %}">click here</a>.</p>
+    <a href="{% url 'lucene_docs' %}">click here</a>.</p>
 {% endif %}
 <h3>Exception Records</h3>
 <ul class="tabs">
