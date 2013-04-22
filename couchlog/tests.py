@@ -2,12 +2,15 @@ from django.test import TestCase
 from django.conf import settings
 from couchlog.models import ExceptionRecord
 import logging
+from dimagi.utils.couch.database import get_safe_write_kwargs
+
 
 class LogTestCase(TestCase):
     
     def setUp(self):
-        for item in ExceptionRecord.view("couchlog/all_by_date", include_docs=True).all():
-            item.delete()
+        db = ExceptionRecord.get_db()
+        for row in db.view("couchlog/all_by_date").all():
+            db.delete_doc(row['id'], **get_safe_write_kwargs())
     
     def testThreshold(self):
         # makes the shady assumption that the couchlog threshold is above debug
