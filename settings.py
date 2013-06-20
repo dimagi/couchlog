@@ -44,16 +44,16 @@ EMAIL_SMTP_PORT = 587
 LOGGING = {
     'version': 1,
     'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
+        'couchlog': {
+            'level': 'WARNING',
+            'class': 'couchlog.handlers.CouchHandler',
         },
     },
     'loggers': {
-        '': {
-            'level': 'CRITICAL',
-            'handler': 'null',
-            'propagate': False,
+        'couchlog.tests': {
+            'level': 'INFO',
+            'propagate': True,
+            'handlers': ['couchlog'],
         }
     }
 }

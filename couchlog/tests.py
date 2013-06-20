@@ -11,22 +11,9 @@ from couchlog.handlers import CouchHandler
 class LogTestCase(TestCase):
     
     def setUp(self):
-        logging.config.dictConfig({
-            'version': 1,
-            'handlers': {
-                'couchlog': {
-                    'level': 'WARNING',
-                    'class': 'couchlog.handlers.CouchHandler',
-                },
-            },
-            'loggers': {
-                'couchlog.tests': {
-                    'level': 'INFO',
-                    'propagate': True,
-                    'handlers': ['couchlog'],
-                }
-            }
-        })
+        # We want to support Python 2.6 a bit longer so we cannot use dictConfig here...
+        # but it is so handy that we put it in settings.py instead of wrestle with crappy
+        # imperative config
         self.logger = logging.getLogger('couchlog.tests')
 
         self.db = ExceptionRecord.get_db()
