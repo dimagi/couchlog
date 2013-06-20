@@ -10,7 +10,7 @@ install:
  - "bash -ex .travis/upgrade-couchdb.sh"
  - "curl http://127.0.0.1:5984/"
  - "pip install -e ."
- - "pip install coverage coveralls"
+ - "pip install coverage coveralls unittest2 mock"
 script: coverage run `which django-admin.py` test --settings settings --traceback couchlog
 after_success:
  - coveralls
