@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = couchlog
+
+[html]
+directory = coverage-report
