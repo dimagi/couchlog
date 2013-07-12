@@ -68,6 +68,7 @@ def dashboard(request):
                                "support_email": config.SUPPORT_EMAIL,
                                "config": config.COUCHLOG_TABLE_CONFIG,
                                "display_cols": config.COUCHLOG_DISPLAY_COLS,
+                               "single_url_base": config.COUCHLOG_SINGLE_URL_BASE,
                                "couchlog_config": config},
                                context_instance=RequestContext(request))
 

@@ -23,6 +23,7 @@ _DEFAULT_DISPLAY_COLS = ["id", "archived?", "date", "", "message", "user", "url"
 COUCHLOG_TABLE_CONFIG = getattr(settings, "COUCHLOG_TABLE_CONFIG", _DEFAULT_TABLE_CONFIG)
 COUCHLOG_DISPLAY_COLS = getattr(settings, "COUCHLOG_DISPLAY_COLS", _DEFAULT_DISPLAY_COLS)
 COUCHLOG_RECORD_WRAPPER = getattr(settings, "COUCHLOG_RECORD_WRAPPER", None)
+COUCHLOG_SINGLE_URL_BASE = getattr(settings, "COUCHLOG_SINGLE_URL_BASE", '/couchlog/ajax/single/')
 
 # We don't bother shipping with these libraries, but if you want to import them from your own 
 # servers just add these configuration params to localsettings.
