@@ -1,6 +1,6 @@
 function init_log_table(filter, id_column, archived_column, date_column,
                         message_column, actions_column, email_column, no_cols,
-                        show, ajax_url) 
+                        show, ajax_url, single_url_base)
 {
     var not_sortable = [];
     for (i=0; i<no_cols; i++) {
@@ -58,7 +58,7 @@ function init_log_table(filter, id_column, archived_column, date_column,
                         } else {
                             display = oObj.aData[message_column];
                         }
-                        return '<a href="/couchlog/ajax/single/' + oObj.aData[0] + '" onclick="$(\'#modal-placeholder\').jqmShow($(this)); return false;"  class="logview">' + display +'</a>';
+                        return '<a href="' + single_url_base + oObj.aData[0] + '" onclick="$(\'#modal-placeholder\').jqmShow($(this)); return false;"  class="logview">' + display +'</a>';
                     },
                     "aTargets": [message_column]
                 }, 

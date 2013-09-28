@@ -4,7 +4,7 @@ import logging
 LUCENE_ENABLED = getattr(settings, "LUCENE_ENABLED", False)
 COUCHLOG_LUCENE_VIEW = getattr(settings, "COUCHLOG_LUCENE_VIEW", "couchlog/search")
 COUCHLOG_LUCENE_DOC_TEMPLATE = getattr(settings, "COUCHLOG_LUCENE_DOC_TEMPLATE", "couchlog/lucene_docs.html")
-SUPPORT_EMAIL = getattr(settings, "SUPPORT_EMAIL", None)
+SUPPORT_EMAIL = getattr(settings, "SUPPORT_EMAIL", None) #todo: make this COUCHLOG_SUPPORT_EMAIL
 
 COUCHLOG_ENABLED = getattr(settings, "COUCHLOG_ENABLED", False)
 COUCHLOG_THRESHOLD = getattr(settings, "COUCHLOG_THRESHOLD", logging.ERROR)
@@ -23,6 +23,7 @@ _DEFAULT_DISPLAY_COLS = ["id", "archived?", "date", "", "message", "user", "url"
 COUCHLOG_TABLE_CONFIG = getattr(settings, "COUCHLOG_TABLE_CONFIG", _DEFAULT_TABLE_CONFIG)
 COUCHLOG_DISPLAY_COLS = getattr(settings, "COUCHLOG_DISPLAY_COLS", _DEFAULT_DISPLAY_COLS)
 COUCHLOG_RECORD_WRAPPER = getattr(settings, "COUCHLOG_RECORD_WRAPPER", None)
+COUCHLOG_SINGLE_URL_BASE = getattr(settings, "COUCHLOG_SINGLE_URL_BASE", '/couchlog/ajax/single/')
 
 # We don't bother shipping with these libraries, but if you want to import them from your own 
 # servers just add these configuration params to localsettings.

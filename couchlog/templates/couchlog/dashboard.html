@@ -27,9 +27,10 @@
         var email_column = {{ config.email_column }};
         var no_cols = {{ config.no_cols }};
         var ajax_url = "{% url 'couchlog_paging' %}";
+        var single_url_base = "{{ single_url_base }}";
         init_log_table(filter, id_column, archived_column, date_column,
                        message_column, actions_column, email_column, no_cols,
-                       show, ajax_url);
+                       show, ajax_url, single_url_base);
     } );
     </script>
     <script type="text/javascript">

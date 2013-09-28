@@ -19,7 +19,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from dimagi.utils.modules import to_function
 
-
 def fail(request):
     # if you want to play with it, wire this to a url
     raise Exception("Couchlog simulated failure!")
@@ -69,6 +68,7 @@ def dashboard(request):
                                "support_email": config.SUPPORT_EMAIL,
                                "config": config.COUCHLOG_TABLE_CONFIG,
                                "display_cols": config.COUCHLOG_DISPLAY_COLS,
+                               "single_url_base": config.COUCHLOG_SINGLE_URL_BASE,
                                "couchlog_config": config},
                                context_instance=RequestContext(request))
 
@@ -238,7 +238,7 @@ def email(request):
     else:
         name = ""
         username = "unknown"
-        reply_to = settings.EMAIL_HOST_USER
+        reply_to = config.SUPPORT_EMAIL
     
     url = "http://%s%s" % (Site.objects.get_current().domain, reverse("couchlog_single", args=[id]))
     email_body = render_to_string("couchlog/email.txt",
@@ -248,7 +248,7 @@ def email(request):
     
     try:
         email = EmailMessage("[COUCHLOG ERROR] %s" % truncate_words(log.message, 10), 
-                             email_body, "%s <%s>" % (name, settings.EMAIL_HOST_USER),
+                             email_body, "%s <%s>" % (name, config.SUPPORT_EMAIL),
                              to, 
                              headers = {'Reply-To': reply_to})
         email.send(fail_silently=False)

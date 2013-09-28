@@ -10,7 +10,10 @@ setup(
     author_email='information@dimagi.com',
     url='http://www.dimagi.com/',
     install_requires = [
-        "couchdbkit"
+        "couchdbkit",
+        "django",
+        "dimagi-utils",
+        "requests",
     ],
     packages = find_packages(exclude=['*.pyc']),
     include_package_data=True
