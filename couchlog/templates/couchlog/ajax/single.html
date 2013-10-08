@@ -1,3 +1,4 @@
+{% load url from future %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% load couchlog_tags %}
@@ -28,7 +29,7 @@
 {% endfor %}
   </table>
 <div class="nav">
-    <a href="{% url couchlog_single log.get_id %}" target="_blank">new window</a>
+    <a href="{% url 'couchlog_single' log.get_id %}" target="_blank">new window</a>
 </div>
 </div>
 </body>
