@@ -17,6 +17,9 @@ class LogTestCase(TestCase):
         # imperative config
         self.logger = logging.getLogger('couchlog.tests')
         self.original_log_level = logging.root.getEffectiveLevel()
+        for handler in list(self.logger.handlers):
+            if isinstance(handler, CouchHandler):
+                self.logger.removeHandler(handler)
         logging.root.setLevel(logging.ERROR)
         init_handler()
 
