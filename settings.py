@@ -2,6 +2,7 @@
 
 SECRET_KEY = 'this is not a secret key'
 
+print 'couchlog settings'
 INSTALLED_APPS = (
     'couchlog',
     'couchdbkit.ext.django',
@@ -44,16 +45,16 @@ EMAIL_SMTP_PORT = 587
 LOGGING = {
     'version': 1,
     'handlers': {
-        'couchlog': {
-            'level': 'WARNING',
-            'class': 'couchlog.handlers.CouchHandler',
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
     },
     'loggers': {
-        'couchlog.tests': {
-            'level': 'INFO',
-            'propagate': True,
-            'handlers': ['couchlog'],
+        '': {
+            'level': 'CRITICAL',
+            'handler': 'null',
+            'propagate': False,
         }
     }
 }

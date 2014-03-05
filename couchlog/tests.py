@@ -1,6 +1,7 @@
 import logging
 
 from django.test import TestCase
+from couchlog.handler_init import init_handler
 from dimagi.utils.couch.database import safe_delete
 
 from couchlog.models import ExceptionRecord
@@ -15,10 +16,19 @@ class LogTestCase(TestCase):
         # but it is so handy that we put it in settings.py instead of wrestle with crappy
         # imperative config
         self.logger = logging.getLogger('couchlog.tests')
+        self.original_log_level = logging.root.getEffectiveLevel()
+        for handler in list(self.logger.handlers):
+            if isinstance(handler, CouchHandler):
+                self.logger.removeHandler(handler)
+        logging.root.setLevel(logging.ERROR)
+        init_handler()
 
         self.db = ExceptionRecord.get_db()
         for row in self.db.view("couchlog/all_by_date").all():
             safe_delete(self.db, row['id'])
+
+    def tearDown(self):
+        logging.root.setLevel(self.original_log_level)
 
     def testThreshold(self):
         # makes the shady assumption that the couchlog threshold is above debug
@@ -54,6 +64,3 @@ class LogTestCase(TestCase):
         self.assertTrue("tests.py" in log.stack_trace)
         self.assertTrue("CouchLogTestException" in log.type)
         self.assertEqual("some other message", log.message)
-        
-        
-    
