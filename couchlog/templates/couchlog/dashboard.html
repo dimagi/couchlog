@@ -1,8 +1,9 @@
 {% extends "couchlog/base.html" %}
 {% load couchlog_tags %}
+{% load hq_shared_tags %}
 {% block page_stylesheets %}
     {% include "couchlog/imports/blueprint.html" %}
-    <link rel="stylesheet" href="{{STATIC_URL}}couchlog/css/couchlog.css" type="text/css">
+    <link rel="stylesheet" href="{% static 'couchlog/css/couchlog.css' %}" type="text/css">
 {% endblock %}
 {% block javascripts %}
     {% include "couchlog/imports/jquery.html" %}
@@ -11,9 +12,9 @@
     {% include "couchlog/imports/datatables.html" %}
 {% endblock %}
 {% block page_javascripts %}
-    <script type="text/javascript" src="{{STATIC_URL}}couchlog/js/logtable.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}couchlog/js/submitredirect.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}couchlog/js/csrf_ajax.js"></script>
+    <script type="text/javascript" src="{% static 'couchlog/js/logtable.js' %}"></script>
+    <script type="text/javascript" src="{% static 'couchlog/js/submitredirect.js' %}"></script>
+    <script type="text/javascript" src="{% static 'couchlog/js/csrf_ajax.js' %}"></script>
     <script type="text/javascript">
     // datatable configuration.
     $(document).ready(function() {
