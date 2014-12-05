@@ -9,9 +9,9 @@ setup(
     author='Dimagi',
     author_email='information@dimagi.com',
     url='http://www.dimagi.com/',
-    install_requires = [
+    install_requires=[
         "couchdbkit",
-        "django",
+        "django<1.7",
         "dimagi-utils",
         "requests",
     ],
