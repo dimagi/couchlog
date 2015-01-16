@@ -6,7 +6,6 @@ import json
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.utils.text import truncate_words
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
@@ -22,7 +21,21 @@ from dimagi.utils.modules import to_function
 def fail(request):
     # if you want to play with it, wire this to a url
     raise Exception("Couchlog simulated failure!")
-    
+
+
+import django
+if django.VERSION < (1, 6):
+    from django.utils.text import truncate_words
+    class Truncator(object):
+        def __init__(self, text):
+            self.text = text
+
+        def words(self, num):
+            return truncate_words(self.text, num)
+
+else:
+    from django.utils.text import Truncator
+
 @permission_required("is_superuser")
 def dashboard(request):
     """
@@ -221,7 +234,8 @@ def update(request):
                  "action": action, 
                  "style_class": "archived" if log.archived else "inbox"}
     return HttpResponse(json.dumps(to_return))
-    
+
+
 @require_POST
 def email(request):
     """
@@ -247,7 +261,7 @@ def email(request):
                                    "exception_url": url})
     
     try:
-        email = EmailMessage("[COUCHLOG ERROR] %s" % truncate_words(log.message, 10), 
+        email = EmailMessage("[COUCHLOG ERROR] %s" % Truncator(log.message).words(10),
                              email_body, "%s <%s>" % (name, config.SUPPORT_EMAIL),
                              to, 
                              headers = {'Reply-To': reply_to})
@@ -259,7 +273,7 @@ def email(request):
         return HttpResponse(json.dumps({"id": id,
                                         "success": False, 
                                         "message": str(e)}))
-        
+
 def lucene_docs(request):
     return render_to_response(config.COUCHLOG_LUCENE_DOC_TEMPLATE, 
                               {"couchlog_config": config},
