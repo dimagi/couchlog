@@ -1,14 +1,13 @@
+from dimagi.utils.web import get_url_base
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_POST
 import json
-from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
-from django.contrib.sites.models import Site
 
 from couchlog.models import ExceptionRecord
 from dimagi.utils.couch.pagination import CouchPaginator, LucenePaginator
@@ -253,13 +252,13 @@ def email(request):
         name = ""
         username = "unknown"
         reply_to = config.SUPPORT_EMAIL
-    
-    url = "http://%s%s" % (Site.objects.get_current().domain, reverse("couchlog_single", args=[id]))
+
+    url = "{}{}".format(get_url_base(), reverse("couchlog_single", args=[id]))
     email_body = render_to_string("couchlog/email.txt",
                                   {"user_info": "%s (%s)" % (name, username),
                                    "notes": notes,
                                    "exception_url": url})
-    
+
     try:
         email = EmailMessage("[COUCHLOG ERROR] %s" % Truncator(log.message).words(10),
                              email_body, "%s <%s>" % (name, config.SUPPORT_EMAIL),
