@@ -102,9 +102,9 @@ class ExceptionRecord(Document):
         record.save()
         if use_raw_data:
             try: 
-                record.put_attachment(request.raw_post_data, name="post_data", 
+                record.put_attachment(request.body, name="post_data",
                                       content_type=request.META["CONTENT_TYPE"],
-                                      content_length=len(request.raw_post_data))
+                                      content_length=len(request.body))
             except Exception:
                 logging.exception("Problem saving attachment to couchlog for %s" % record.get_id)
         signals.couchlog_created.send_robust(sender="couchlog", record=record)
