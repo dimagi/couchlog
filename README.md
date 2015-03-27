@@ -29,3 +29,4 @@ LOGGING = {
 }
 ```
 
+By default couchlog views require superuser permissions, but you can override it by setting COUCHLOG_AUTH_DECORATOR in settings.py to a different permission decorator.
