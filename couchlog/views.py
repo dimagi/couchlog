@@ -17,10 +17,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from dimagi.utils.modules import to_function
 
-def fail(request):
-    # if you want to play with it, wire this to a url
-    raise Exception("Couchlog simulated failure!")
-
 
 import django
 if django.VERSION < (1, 6):
@@ -34,6 +30,12 @@ if django.VERSION < (1, 6):
 
 else:
     from django.utils.text import Truncator
+
+
+def fail(request):
+    # if you want to play with it, wire this to a url
+    raise Exception("Couchlog simulated failure!")
+
 
 @permission_required("is_superuser")
 def dashboard(request):
