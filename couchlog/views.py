@@ -32,12 +32,16 @@ else:
     from django.utils.text import Truncator
 
 
+def couchlog_permission_check():
+    return permission_required("is_superuser")
+
+
 def fail(request):
     # if you want to play with it, wire this to a url
     raise Exception("Couchlog simulated failure!")
 
 
-@permission_required("is_superuser")
+@couchlog_permission_check()
 def dashboard(request):
     """
     View all couch error data
@@ -86,7 +90,7 @@ def dashboard(request):
                                "couchlog_config": config},
                                context_instance=RequestContext(request))
 
-@permission_required("is_superuser")
+@couchlog_permission_check()
 def single(request, log_id, display="full"):
     log = ExceptionRecord.get(log_id)
     if request.method == "POST":
@@ -142,7 +146,7 @@ def _couchlog_count():
     count_results = ExceptionRecord.get_db().view("couchlog/count").one()
     return count_results["value"] if count_results else 0
 
-@permission_required("is_superuser")
+@couchlog_permission_check()
 def lucene_search(request, search_key, show_all):
     
     def wrapper(row):
@@ -158,7 +162,7 @@ def lucene_search(request, search_key, show_all):
                                 database=ExceptionRecord.get_db())
     return paginator.get_ajax_response(request, search_key, extras={"iTotalRecords": total_records})
                                     
-@permission_required("is_superuser")
+@couchlog_permission_check()
 def paging(request):
     
     # what to show
@@ -205,10 +209,8 @@ def paging(request):
                                                         "iTotalRecords": total_records})
                                     
         
-
-
 @require_POST
-@permission_required("is_superuser")
+@couchlog_permission_check()
 def update(request):
     """
     Update a couch log.
@@ -274,6 +276,7 @@ def email(request):
         return HttpResponse(json.dumps({"id": id,
                                         "success": False, 
                                         "message": str(e)}))
+
 
 def lucene_docs(request):
     return render_to_response(config.COUCHLOG_LUCENE_DOC_TEMPLATE, 
