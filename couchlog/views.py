@@ -1,3 +1,4 @@
+from django.conf import settings
 from dimagi.utils.web import get_url_base
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
@@ -33,6 +34,9 @@ else:
 
 
 def couchlog_permission_check():
+    if getattr(settings, 'COUCHLOG_AUTH_DECORATOR', None):
+        return to_function(settings.COUCHLOG_AUTH_DECORATOR)
+
     return permission_required("is_superuser", raise_exception=True)
 
 
