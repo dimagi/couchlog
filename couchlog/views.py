@@ -33,7 +33,7 @@ else:
 
 
 def couchlog_permission_check():
-    return permission_required("is_superuser")
+    return permission_required("is_superuser", raise_exception=True)
 
 
 def fail(request):
