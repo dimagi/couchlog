@@ -3,7 +3,7 @@
 
 import random
 
-from couchdbkit.ext.django.schema import *
+from dimagi.ext.couchdbkit import *
 from datetime import datetime
 import sys, traceback, logging
 from couchlog import config
