@@ -29,7 +29,8 @@ COUCH_DATABASE_NAME = 'couchlog'
 
 COUCH_DATABASE = 'http://127.0.0.1:5984/couchlog_test'
 
-COUCHDB_DATABASES = [ (app, 'http://127.0.0.1:5984/couchlog') for app in ['couch', 'couchlog'] ]
+COUCHDB_DATABASES = [(app, 'http://127.0.0.1:5984/couchlog')
+                     for app in ['couch', 'couchlog', 'ext']]
 
 TEST_RUNNER = 'couchdbkit.ext.django.testrunner.CouchDbKitTestSuiteRunner'
 
