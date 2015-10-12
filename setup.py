@@ -11,8 +11,8 @@ setup(
     url='http://www.dimagi.com/',
     install_requires=[
         "couchdbkit",
-        "django<1.7",
-        "dimagi-utils>=1.3usec",
+        "django==1.7.10",
+        "dimagi-utils==1.2.2",
         "requests",
     ],
     packages=find_packages(exclude=['*.pyc']),
