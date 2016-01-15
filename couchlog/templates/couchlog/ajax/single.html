@@ -27,8 +27,5 @@
     <tr><td>{{ item }}:&nbsp;&nbsp;</td><td><strong>{{ log|get_attr:item|default:"N/A" }}</strong></td></tr>
 {% endfor %}
   </table>
-<div class="nav">
-    <a href="{% url 'couchlog_single' log.get_id %}" target="_blank">new window</a>
-</div>
 </div>
 </body>
