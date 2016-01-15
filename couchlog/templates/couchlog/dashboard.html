@@ -7,7 +7,6 @@
 {% block javascripts %}
     {% include "couchlog/imports/jquery.html" %}
     {% include "couchlog/imports/jquery-ui.html" %}
-    {% include "couchlog/imports/jqmodal.html" %}
     {% include "couchlog/imports/datatables.html" %}
 {% endblock %}
 {% block page_javascripts %}
@@ -149,13 +148,6 @@
                 });
     });
     </script>
-    <script type="text/javascript">
-    // this one allows the log viewer to pop up
-    $().ready(function() {
-        $('#modal-placeholder').jqm({ajax: '@href', trigger: 'a.logview', 
-                                     ajaxText: "Please wait while we load that for you..." });
-    });
-    </script>
 {% endblock %}
 {% block content %}
 {% if lucene_enabled %}
@@ -187,7 +179,6 @@
 <tbody>
 </tbody>
 </table>
-<div class="jqmWindow" id="modal-placeholder"></div>
 <input type="hidden" id="startkey" value="{{startkey}}"></input>
 <input type="hidden" id="endkey" value="{{endkey}}"></input>
 <div id="email-form" title="Report error">
