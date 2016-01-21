@@ -25,6 +25,7 @@
 	<h3>Exception Details</h3>
 	<div id="archive_options">
 	<form method="post">
+    {% csrf_token %}
 	{% if log.archived %}
 	    <input type="hidden" name="action" value="move_to_inbox" />
 	    <input type="submit" value="Move to Inbox" /> 
@@ -36,6 +37,7 @@
 </div>
 	<div id="delete">
     <form method="post">
+        {% csrf_token %}
         <input type="hidden" name="action" value="delete" />
         <input type="submit" value="Delete"/> 
     </form>
