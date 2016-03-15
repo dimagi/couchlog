@@ -1,3 +1,4 @@
+import uuid
 from django.conf import settings
 from dimagi.utils.web import get_url_base
 from django.shortcuts import render_to_response
@@ -84,13 +85,14 @@ def dashboard(request):
                 ExceptionRecord.get_db().bulk_delete(rec_json_list)
                 messages.success(request, "%s records successfully deleted." % len(records))
     
+    single_url_base = reverse('couchlog_single', args=['throwaway']).replace('throwaway/', '')
     return render_to_response('couchlog/dashboard.html',
                               {"show" : show, "count": True,
                                "lucene_enabled": config.LUCENE_ENABLED,
                                "support_email": config.SUPPORT_EMAIL,
                                "config": config.COUCHLOG_TABLE_CONFIG,
                                "display_cols": config.COUCHLOG_DISPLAY_COLS,
-                               "single_url_base": config.COUCHLOG_SINGLE_URL_BASE,
+                               "single_url_base": single_url_base,
                                "couchlog_config": config},
                                context_instance=RequestContext(request))
 
