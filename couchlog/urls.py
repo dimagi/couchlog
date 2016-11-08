@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from couchlog.views import (
     dashboard,
@@ -9,7 +9,7 @@ from couchlog.views import (
     update,
 )
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', dashboard, name='couchlog_home'),
     url(r'^update/$', update, name='couchlog_update'),
     url(r'^email/$', email, name='couchlog_email'),
@@ -20,5 +20,4 @@ urlpatterns = patterns('',
     url(r'^ajax/paging/$', paging, name='couchlog_paging'),
     url(r'^ajax/single/(?P<log_id>\w+)/$', single,
         {"display":"ajax"}, name='couchlog_shortsingle'),
-    
-)
+]
